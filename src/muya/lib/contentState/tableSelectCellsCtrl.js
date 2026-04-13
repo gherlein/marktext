@@ -9,7 +9,10 @@ const tableSelectCellsCtrl = ContentState => {
     const { eventCenter } = this.muya
     const { target } = event
     const cell = target.closest('th') || target.closest('td')
-    const tableId = target.closest('table').id
+    const tableEl = target.closest('table')
+    if (!cell || !tableEl) return
+    const tableId = tableEl.id
+    if (!tableId) return
     const row = getIndex('left', cell)
     const column = getIndex('bottom', cell)
     this.cellSelectInfo = {

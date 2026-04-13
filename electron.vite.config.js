@@ -1,4 +1,5 @@
 import { resolve, dirname } from 'path'
+import { execSync } from 'child_process'
 import { defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 import renderer from 'vite-plugin-electron-renderer'
@@ -9,6 +10,13 @@ import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+
+let gitHash = ''
+try {
+  gitHash = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim()
+} catch {
+  gitHash = 'unknown'
+}
 
 export default defineConfig({
   main: {
@@ -23,7 +31,7 @@ export default defineConfig({
     },
     define: {
       MARKTEXT_VERSION: JSON.stringify(packageJson.version),
-      MARKTEXT_VERSION_STRING: JSON.stringify(`v${packageJson.version}`)
+      MARKTEXT_VERSION_STRING: JSON.stringify(`v${packageJson.version}-${gitHash}`)
     },
     resolve: {
       alias: {

@@ -216,6 +216,10 @@ class ContentState {
     }
     const startOutMostBlock = this.findOutMostBlock(startBlock)
     const endOutMostBlock = this.findOutMostBlock(endBlock)
+    if (!startOutMostBlock || !endOutMostBlock) {
+      this.renderRange = [null, null]
+      return
+    }
 
     this.renderRange = [startOutMostBlock.preSibling, endOutMostBlock.nextSibling]
   }

@@ -87,14 +87,11 @@ const scrollToCords = (y) => {
   requestAnimationFrame(() => {
     // Ensures there we have scrolled to that position before the browser paints the next frame
     // prevents "flickers"
-    if (!sourceCodeContainer.value) return
     sourceCodeContainer.value.scrollTop = y
   })
 }
 
-const handleFileChange = ({ id, markdown: newMarkdown, muyaIndexCursor, scrollTop }) => {
-  if (!editor.value) return
-
+const handleFileChange = ({ id, markdown: newMarkdown, cursor, scrollTop }) => {
   prepareTabSwitch()
 
   if (typeof newMarkdown === 'string') {
@@ -103,9 +100,8 @@ const handleFileChange = ({ id, markdown: newMarkdown, muyaIndexCursor, scrollTo
 
   // t('editor.sourceCode.cursorNullComment')
 
-  if (muyaIndexCursor) {
-    const { anchor, focus } = muyaIndexCursor
-
+  if (cursor) {
+    const { anchor, focus } = cursor
     editor.value.setSelection(anchor, focus, { scroll: true }) // Scroll the focus into view.
   } else {
     setCursorAtFirstLine(editor.value)

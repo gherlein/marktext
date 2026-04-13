@@ -321,10 +321,18 @@ const formatCtrl = (ContentState) => {
       let nextBlock = startBlock
       const formatType = type !== 'clear' ? type : undefined
       while (nextBlock && nextBlock !== endBlock) {
-        this.clearBlockFormat(nextBlock, { start, end }, formatType)
+        const iterStart = { ...start, delata: 0 }
+        const iterEnd = { ...end, delata: 0 }
+        this.clearBlockFormat(nextBlock, { start: iterStart, end: iterEnd }, formatType)
+        if (nextBlock === startBlock) {
+          start.offset = iterStart.offset
+        }
         nextBlock = this.findNextBlockInLocation(nextBlock)
       }
-      this.clearBlockFormat(endBlock, { start, end }, formatType)
+      const lastStart = { ...start, delata: 0 }
+      const lastEnd = { ...end, delata: 0 }
+      this.clearBlockFormat(endBlock, { start: lastStart, end: lastEnd }, formatType)
+      end.offset = lastEnd.offset
 
       if (type !== 'clear') {
         addFormat(type, startBlock, {

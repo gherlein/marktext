@@ -24,9 +24,15 @@ class Preference extends EventEmitter {
 
     const { preferencesPath } = paths
     this.preferencesPath = preferencesPath
-    this.hasPreferencesFile = fs.existsSync(
-      path.join(this.preferencesPath, `./${PREFERENCES_FILE_NAME}.json`)
-    )
+    const preferencesFilePath = path.join(this.preferencesPath, `./${PREFERENCES_FILE_NAME}.json`)
+    this.hasPreferencesFile = fs.existsSync(preferencesFilePath)
+
+    // Sanitize existing config before Store construction so that stale enum
+    // values from older versions do not cause a fatal schema-validation error.
+    if (this.hasPreferencesFile) {
+      this._sanitizeConfigFile(preferencesFilePath)
+    }
+
     this.store = new Store({
       schema,
       name: PREFERENCES_FILE_NAME
@@ -164,6 +170,47 @@ class Preference extends EventEmitter {
     ipcMain.on('set-user-preference', (settings) => {
       this.setItems(settings)
     })
+  }
+
+  /**
+   * Pre-validate an existing config file against the schema and reset any
+   * values that would fail enum/type validation to their schema defaults.
+   * This prevents electron-store from throwing on construction when a user
+   * upgrades from a version that had different allowed values.
+   */
+  _sanitizeConfigFile(filePath) {
+    try {
+      const raw = fs.readFileSync(filePath, { encoding: 'utf8' })
+      const config = JSON.parse(raw)
+      let changed = false
+
+      for (const [key, rule] of Object.entries(schema)) {
+        if (!(key in config)) continue
+
+        if (Array.isArray(rule.enum) && !rule.enum.includes(config[key])) {
+          log.warn(
+            `Preference "${key}" has invalid value "${config[key]}"; resetting to default "${rule.default}".`
+          )
+          config[key] = rule.default
+          changed = true
+        } else if (rule.type === 'number' && typeof config[key] !== 'number') {
+          config[key] = rule.default
+          changed = true
+        } else if (rule.type === 'boolean' && typeof config[key] !== 'boolean') {
+          config[key] = rule.default
+          changed = true
+        } else if (rule.type === 'string' && typeof config[key] !== 'string') {
+          config[key] = rule.default
+          changed = true
+        }
+      }
+
+      if (changed) {
+        fs.writeFileSync(filePath, JSON.stringify(config, null, 2), { encoding: 'utf8' })
+      }
+    } catch (error) {
+      log.error('Failed to sanitize preferences file:', error)
+    }
   }
 
   /**

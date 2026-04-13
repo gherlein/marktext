@@ -684,7 +684,6 @@ const handleUploadedImage = (url, deletionUrl) => {
 const scrollToCursor = (duration = 300) => {
   nextTick(() => {
     const { container } = editor.value
-    if (!container) return
     const { y } = editor.value.getSelection().cursorCoords
     animatedScrollTo(container, container.scrollTop + y - STANDAR_Y, duration)
   })
@@ -704,7 +703,6 @@ const scrollToCords = (y) => {
     resizeObserverForEditor.observe(editorId)
   }
   requestAnimationFrame(() => {
-    if (!container) return
     // wait for the padding to be applied (if any)
     container.style.visibility = 'visible'
     container.style.pointerEvents = 'auto'
