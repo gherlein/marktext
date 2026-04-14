@@ -35,6 +35,12 @@
   </a>
 </div>
 
+## About This Fork
+
+This is a fork of [Tkaixiang/marktext](https://github.com/Tkaixiang/marktext) focused on fixing bugs and improving stability. Bug fixes in this fork are partially written with the assistance of [Claude Code](https://claude.ai/claude-code).
+
+---
+
 - [MarkText](https://github.com/marktext/marktext) is a free and open source markdown editor originally written by [Jocs](https://github.com/Jocs) and [contributors](https://github.com/marktext/marktext/graphs/contributors).
 
 - Sadly, the core repository became unmaintained since about 3 years ago, but various Quality of Life issues remained that I noticed in my daily usage.
@@ -73,6 +79,22 @@
 > Please see [this fix here](https://github.com/marktext/marktext/issues/3004#issuecomment-1038207300) (which also applies to any other app that lacks a Developer Account signing)
 
 - Available on the [Releases Page](https://github.com/Tkaixiang/marktext/releases)
+
+## Building from Source
+
+> **Note:** This fork is not tested on Windows. Build and runtime behavior on Windows is unknown.
+
+If you prefer to build from source, a `Makefile` is provided:
+
+```bash
+make setup    # Install dependencies
+make build    # Build the application
+make dist     # Create distributable packages
+```
+
+Run `make` with no arguments to see all available targets.
+
+Or, you can install manually by following the steps in the [Developer Documentation](docs/dev/README.md).
 
 # 2. Screenshots
 
